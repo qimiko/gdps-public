@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "1.9 GDPS"
-#define MyAppVersion "u9"
+#define MyAppVersion "9.0.1.0"
 #define MyAppPublisher "1.9 GDPS"
 #define MyAppURL "https://absolllute.com/gdps"
 #define MyAppExeName "DontRenameMeThxDash.exe"
@@ -13,7 +13,7 @@
 AppId={{128F81E8-F701-43F4-855D-80E59224B635}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-; AppVerName={#MyAppName} ({#MyAppVersion})
+AppVerName={#MyAppName} u{#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
