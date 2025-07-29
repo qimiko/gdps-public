@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">1.9 GDPS</string>
+    <string name="title_activity_geometry_dash">GeometryDash</string>
+    <string name="preference_key">com.kyurime.GeometryJump.PREFERENCE_FILE_KEY</string>
+    <string name="is_loading_key">IS_LOADING</string>
+    <string name="is_layout_restricted_key">IS_LAYOUT_RESTRICTED</string>
+    <string name="import_level_path">IMPORT_LEVEL_PATH</string>
+    <string name="message_box_accept">OK</string>
+    <string name="no_file_selected">No file selected!</string>
+    <string name="file_unimplemented">File selection is currently unimplemented.</string>
+</resources>

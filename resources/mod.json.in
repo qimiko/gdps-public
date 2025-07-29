@@ -1,0 +1,65 @@
+{
+    "geode": "4.7.0",
+    "gd": {
+        "android": "1.920",
+        "win": "1.920"
+    },
+    "id": "@GEODE_MOD_ID@",
+    "version": "@aurav2_VERSION@",
+    "name": "1.9 GDPS",
+    "developer": "zmx",
+    "description": "The 1.9 GDPS base mod.",
+    "early-load": true,
+    "internal-binary": {
+        "android": "aurav2",
+        "win": "aurav2"
+    },
+    "links": {
+        "community": "https://discord.gg/invite/1-9-gdps-328307969882062848",
+        "homepage": "https://absolllute.com/gdps/",
+        "source": "https://github.com/qimiko/gdps-public"
+    },
+    "resources": {
+        "files": [
+            "about.md",
+            "changelog.md",
+            "logo.png",
+            "mod.json",
+            "FiraMono-Regular.ttf",
+            "Aura.mp3",
+            "Clutterfunk2.mp3",
+            "JackRussel.mp3",
+            "Thumper.mp3",
+            "Streetwise.mp3",
+            "level_19",
+            "level_20",
+            "level_21",
+            "level_21b",
+            "level_22",
+            "level_23",
+            "outfits.json",
+            "muli-sb.ttf"
+        ],
+        "sprites": [
+            "splash.png",
+            "square02.png",
+            "square04.png",
+            "square05.png",
+            "square06.png",
+            "streak_03_001.png",
+            "streak_04_001.png",
+            "gnome.png"
+        ],
+        "spritesheets": {
+            "IconsSheet": [
+                "icons/*.png"
+            ],
+            "ModificationsSheet": [
+                "modifications/*.png"
+            ],
+            "BadgeSheet": [
+                "badges/*.png"
+            ]
+        }
+    }
+}

@@ -1,0 +1,96 @@
+name: Build Android
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Java JDK
+      uses: actions/setup-java@v3.9.0
+      with:
+        java-version: 21
+        distribution: temurin
+        cache: gradle
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ninja-build
+
+    - name: Setup Geode CLI
+      uses: geode-sdk/cli/.github/actions/setup@main
+      with:
+        version: "latest"
+
+    - uses: actions/checkout@v4
+      with:
+        repository: "qimiko/geode"
+        ref: "gdps"
+        path: ${{ github.workspace }}/geode-sdk-clone
+
+    - uses: robinraju/release-downloader@v1
+      with:
+        repository: "qimiko/geode"
+        tag: "nightly"
+        fileName: "geode-*-android32.zip"
+        out-file-path: "${{ github.workspace }}/geode-sdk-clone/bin/nightly"
+        extract: true
+
+    - name: Download base APK
+      run: curl ${{ secrets.FULL_VERSION_DOWNLOAD_URL }} -o ${{ github.workspace }}/gd.apk
+
+    - name: Run APK setup
+      run: ${{ github.workspace }}/android/setup-apk.sh ${{ github.workspace }}/gd.apk
+      working-directory: ${{ github.workspace }}/android/
+
+    - name: Load CPM cache
+      id: cache-cpm
+      uses: actions/cache@v3
+      with:
+        path: ~/cpm-cache
+        key: ${{ runner.os }}-cpm-${{ hashFiles('**/') }}
+        restore-keys: |
+          ${{ runner.os }}-cpm-
+
+    - name: Generate keystore file
+      run: echo ${{secrets.KEYSTORE_FILE}} | base64 -d > ~/release.keystore
+
+    - name: Generate keystore properties
+      run: |
+            touch ${{ github.workspace }}/android/app/signing.properties
+            echo "storeFile=$HOME/release.keystore
+            storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+            keyAlias=${{ secrets.KEY_ALIAS }}
+            keyPassword=${{ secrets.KEY_PASSWORD }}" > ${{ github.workspace }}/android/app/signing.properties
+
+    - name: Fix gradle permissions
+      run: chmod +x ${{ github.workspace }}/android/gradlew
+
+    - name: Build project
+      run: ${{ github.workspace }}/android/gradlew assembleFullRelease
+      working-directory: ${{ github.workspace }}/android/
+      env:
+        CPM_SOURCE_CACHE: ~/cpm-cache
+        GEODE_SDK: ${{ github.workspace }}/geode-sdk-clone
+
+    - name: Generate output data
+      id: name
+      run: |
+        echo "date=$(date +'%y%m%d')" >> $GITHUB_OUTPUT
+        echo "hash=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+    - name: Move output file
+      run: mv ${{ github.workspace }}/android/app/build/outputs/apk/full/release/app-full-release.apk ${{ github.workspace }}/${{steps.name.outputs.date}}-gdps.apk
+
+    - name: Upload release build
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.name.outputs.date }}-${{ steps.name.outputs.hash }}-gdps-android
+        path: ${{ github.workspace }}/${{ steps.name.outputs.date }}-gdps.apk

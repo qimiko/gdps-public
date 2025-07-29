@@ -1,0 +1,100 @@
+name: Build Windows
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-2025
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Ninja
+      shell: bash
+      run: |
+        curl -L https://github.com/ninja-build/ninja/releases/latest/download/ninja-win.zip -o ninja.zip
+        7z x ninja.zip -o"$GITHUB_WORKSPACE/ninja"
+        echo "$GITHUB_WORKSPACE/ninja" >> $GITHUB_PATH
+
+    - name: Update LLVM
+      shell: bash
+      run: |
+        curl -L https://github.com/llvm/llvm-project/releases/download/llvmorg-20.1.8/LLVM-20.1.8-win64.exe -o llvm-inst.exe
+        7z x llvm-inst.exe -ollvm bin/clang.exe bin/clang++.exe bin/lld-link.exe bin/llvm-rc.exe bin/*.dll lib/clang/*/include/*
+        echo "$GITHUB_WORKSPACE/llvm/bin" >> $GITHUB_PATH
+
+    - name: Setup Inno Setup
+      run: choco install innosetup
+
+    - name: Setup Geode CLI
+      uses: geode-sdk/cli/.github/actions/setup@main
+      with:
+        version: "latest"
+
+    - uses: actions/checkout@v4
+      with:
+        repository: "qimiko/geode"
+        ref: "gdps"
+        path: ${{ github.workspace }}/geode-sdk-clone
+
+    - uses: robinraju/release-downloader@v1
+      with:
+        repository: "qimiko/geode"
+        tag: "nightly"
+        fileName: "geode-*-win.zip"
+        out-file-path: "${{ github.workspace }}/geode-sdk-clone/bin/nightly"
+        extract: true
+
+    - name: Load CPM cache
+      id: cache-cpm
+      uses: actions/cache@v3
+      with:
+        path: ~/cpm-cache
+        key: ${{ runner.os }}-cpm-${{ hashFiles('**/') }}
+        restore-keys: |
+          ${{ runner.os }}-cpm-
+
+    - name: Configure project
+      run: cmake -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS=-m32 -DCMAKE_C_FLAGS=-m32 -G Ninja -DGEODE_DONT_INSTALL_MODS=ON
+      env:
+        CPM_SOURCE_CACHE: ~/cpm-cache
+        GEODE_SDK: ${{ github.workspace }}/geode-sdk-clone
+
+    - name: Build project
+      run: cmake --build build
+      env:
+        CPM_SOURCE_CACHE: ~/cpm-cache
+        GEODE_SDK: ${{ github.workspace }}/geode-sdk-clone
+
+    - name: Download base game
+      shell: pwsh
+      run: |
+        curl ${{ secrets.FULL_VERSION_WIN_DOWNLOAD_URL }} -o ${{ github.workspace }}/windows/game.zip
+        Expand-Archive ${{ github.workspace }}/windows/game.zip ${{ github.workspace }}/windows/game
+
+    - name: Package project
+      shell: pwsh
+      run: |
+        Import-Module "$env:ChocolateyInstall/helpers/chocolateyInstaller.psm1"
+        refreshenv
+        ${{ github.workspace }}/windows/package.ps1
+      env:
+        GEODE_SDK: ${{ github.workspace }}/geode-sdk-clone
+
+    - name: Generate output data
+      shell: bash
+      id: name
+      run: |
+        echo "date=$(date +'%y%m%d')" >> $GITHUB_OUTPUT
+        echo "hash=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+    - name: Upload release build
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.name.outputs.date }}-${{ steps.name.outputs.hash }}-gdps-win
+        path: |
+          ${{ github.workspace }}/windows/Output/gdps.exe
+          ${{ github.workspace }}/windows/Output/gdps.zip

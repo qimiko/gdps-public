@@ -1,0 +1,91 @@
+name: Build full
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: libaura branch name
+        required: true
+        default: 'main'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Add submodule private key
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: |
+          ${{secrets.SUBMODULE_SSH_KEY}}
+
+    - name: Fetch submodules
+      run: git submodule update --init --recursive --remote
+
+    - name: Checkout input libaura branch
+      working-directory: ${{github.workspace}}/app/src/main/cpp/libaurav2/
+      run: git checkout ${{github.event.inputs.branch}}
+      if: github.event_name == 'workflow_dispatch' && github.event.inputs.branch != 'main'
+
+    - name: Setup Java JDK
+      uses: actions/setup-java@v3.9.0
+      with:
+        java-version: 19
+        distribution: temurin
+        cache: gradle
+
+    - uses: awalsh128/cache-apt-pkgs-action@v1
+      with:
+        packages: libncurses5
+        version: 1.0
+
+    - name: Download base APK
+      run: curl ${{secrets.FULL_VERSION_DOWNLOAD_URL}} -o ${{github.workspace}}/gd.apk
+
+    - name: Run APK setup
+      run: ${{github.workspace}}/setup-apk.sh ${{github.workspace}}/gd.apk
+
+    - name: Load CPM cache
+      id: cache-cpm
+      uses: actions/cache@v3
+      with:
+        path: ~/cpm-cache
+        key: ${{ runner.os }}-cpm-${{ hashFiles('**/') }}
+        restore-keys: |
+          ${{ runner.os }}-cpm-
+
+    - name: Generate keystore file
+      run: echo ${{secrets.KEYSTORE_FILE}} | base64 -d > ~/release.keystore
+
+    - name: Generate keystore properties
+      run: |
+            touch ${{github.workspace}}/app/signing.properties
+            echo "storeFile=$HOME/release.keystore
+            storePassword=${{secrets.KEYSTORE_PASSWORD}}
+            keyAlias=${{secrets.KEY_ALIAS}}
+            keyPassword=${{secrets.KEY_PASSWORD}}" > ${{github.workspace}}/app/signing.properties
+
+    - name: Fix gradle permissions
+      run: chmod +x ./gradlew
+
+    - name: Build project
+      run: ./gradlew assembleFullRelease
+      env:
+        CPM_SOURCE_CACHE: ~/cpm-cache
+
+    - name: Generate output date
+      id: date
+      run: echo "date=$(date +'%y%m%d')" >> $GITHUB_OUTPUT
+
+    - name: Move output file
+      run: mv ${{github.workspace}}/app/build/outputs/apk/full/release/app-full-release.apk $HOME/${{steps.date.outputs.date}}-gdps.apk
+
+    - name: Upload release build
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{steps.date.outputs.date}}-gdps-${{github.sha}}.apk
+        path: $HOME/${{steps.date.outputs.date}}-gdps.apk

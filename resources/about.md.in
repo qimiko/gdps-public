@@ -1,0 +1,17 @@
+# 1.9 GDPS Core
+
+Core mod for the **1.9 GDPS**.
+
+For support and updates, please join the [1.9 GDPS server](https://discord.gg/invite/1-9-gdps-328307969882062848).
+
+## Credits
+
+Beyond the libraries used by the [Geode SDK](https://geode-sdk.org/), this mod depends on the following libraries:
+
+ * [gd-imgui-cocos](https://github.com/qimiko/gd-imgui-cocos)
+ * [Dear ImGui](https://github.com/ocornut/imgui)
+ * [freetype](https://github.com/freetype/freetype)
+ * [discord-rpc](https://github.com/discord/discord-rpc)
+ * [pugixml](https://github.com/zeux/pugixml)
+
+**Special thanks** to all of the testers over the years! :)

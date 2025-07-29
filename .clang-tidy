@@ -1,0 +1,2 @@
+Checks: -*,android-*,modernize-*,-modernize-use-trailing-return-type,performance-*,portability-*,misc-*,-misc-non-private-member-variables-in-classes,bugprone-*,cppcoreguidelines-*,-cppcoreguidelines-avoid-non-const-global-variables,-cppcoreguidelines-avoid-magic-numbers,-cppcoreguidelines-pro-type-reinterpret-cast,-cppcoreguidelines-pro-type-vararg,-cppcoreguidelines-non-private-member-variables-in-classes,-cppcoreguidelines-owning-memory
+FormatStyle: webkit

@@ -1,0 +1,149 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+tasks.register("mergeGJAssets") {
+    doLast {
+        String gjAssetsDir = project.projectDir.path + "/src/full/gjAssets"
+        String customAssetsDir = project.projectDir.path + "/src/main/assets"
+        String assetsDir = project.projectDir.path + "/src/full/assets"
+
+        groovy.ant.AntBuilder ant = new groovy.ant.AntBuilder()
+
+        ant.copy(todir:assetsDir) {
+            fileset(dir:gjAssetsDir)
+        }
+
+        ant.copy(todir:assetsDir, overwrite:true) {
+            fileset(dir:customAssetsDir)
+        }
+    }
+}
+
+tasks.register("cleanGJAssets") {
+    doLast {
+        String assetsDir = project.projectDir.path + "/src/full/assets"
+
+        new groovy.ant.AntBuilder().delete(dir:assetsDir)
+    }
+}
+
+android {
+    signingConfigs {
+        release {
+            def properties = new Properties()
+            def signingInputStream = new FileInputStream(file("signing.properties"))
+            properties.load(signingInputStream)
+
+            storeFile = file(properties["storeFile"])
+            storePassword = properties["storePassword"]
+            keyAlias = properties["keyAlias"]
+            keyPassword = properties["keyPassword"]
+        }
+    }
+    compileSdk 35
+    ndkVersion '28.2.13676358'
+
+    defaultConfig {
+        applicationId "com.kyurime.geometryjump"
+        minSdk 23
+        targetSdk 35
+        versionCode 39
+        versionName "u9-beta.4"
+
+        vectorDrawables {
+            useSupportLibrary true
+        }
+
+        ndk {
+            abiFilters "armeabi-v7a"
+        }
+
+        buildConfigField("boolean", "IS_LAUNCHER", "false")
+
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_STL=c++_shared", "-DGDMOD_RESOURCES_PATH=${projectDir.path + "/src/main/assets/zmx.aura/"}"
+            }
+        }
+
+        signingConfig signingConfigs.release
+    }
+
+    buildFeatures.buildConfig = true
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            externalNativeBuild {
+                cmake {
+                    arguments "-DGDMOD_ENABLE_DEV_OVERLAY=OFF"
+                }
+            }
+        }
+
+        development {
+            externalNativeBuild {
+                cmake {
+                    arguments "-DGDMOD_ENABLE_DEV_OVERLAY=ON", "-DCMAKE_BUILD_TYPE=RelWithDebInfo"
+                }
+            }
+            debuggable true
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            version "3.25.0+"
+            path file('src/main/cpp/CMakeLists.txt')
+        }
+    }
+    androidResources {
+        ignoreAssetsPattern '.keep'
+    }
+    namespace 'com.kyurime.geometryjump'
+
+    flavorDimensions += "type"
+    productFlavors {
+        create("full") {
+        }
+        create("launcher") {
+            applicationIdSuffix = ".launcher"
+            versionNameSuffix = "-launcher"
+            buildConfigField("boolean", "IS_LAUNCHER", "true")
+        }
+    }
+
+    applicationVariants.configureEach { variant ->
+        if (variant.name.startsWith("full")) {
+            tasks.named("merge${variant.name.capitalize()}Assets") {
+                dependsOn tasks.named("mergeGJAssets")
+            }
+        }
+        tasks.named("clean") {
+            dependsOn tasks.named("cleanGJAssets")
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.16.0'
+    implementation 'androidx.fragment:fragment-ktx:1.8.8'
+    implementation "androidx.documentfile:documentfile:1.1.0"
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation files('../libs/fmod.jar')
+}

@@ -1,0 +1,15 @@
+#pragma once
+#ifndef CMAKE_CONFIG_HPP
+#define CMAKE_CONFIG_HPP
+
+#define CMAKE_CONFIG_HASH "@GIT_SHA1@"
+#define CMAKE_CONFIG_VERSION "@aurav2_VERSION@"
+#define CMAKE_CONFIG_BRANCH "@GIT_BRANCH@"
+
+namespace CMakeConfiguration {
+	constexpr auto HASH = CMAKE_CONFIG_HASH;
+	constexpr auto BRANCH = CMAKE_CONFIG_BRANCH;
+
+	constexpr auto VERSION = CMAKE_CONFIG_VERSION;
+}
+#endif

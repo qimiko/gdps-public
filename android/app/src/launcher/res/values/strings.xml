@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">1.9 GDPS Launcher</string>
+    <string name="app_not_found">
+🚫 Launcher load failed: Package com.kyurime.geometryjump was not found.\n
+A full version of 1.9 GDPS is required to use the launcher.
+    </string>
+</resources>

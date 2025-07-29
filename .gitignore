@@ -1,0 +1,7 @@
+build/**
+build-*/**
+include/base/cmake_config.hpp
+resources/about.md
+resources/mod.json
+include/base/resources.hpp
+.cache/**

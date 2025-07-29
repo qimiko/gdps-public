@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>frames</key>
+	<dict>
+		<key>geode.loader/modtober24-banner-2.png</key>
+		<dict>
+			<key>spriteOffset</key>
+			<string>{0,0}</string>
+			<key>spriteSize</key>
+			<string>{1590,148}</string>
+			<key>spriteSourceSize</key>
+			<string>{1590,148}</string>
+			<key>textureRect</key>
+			<string>{{0,0},{1590,148}}</string>
+			<key>textureRotated</key>
+			<false/>
+		</dict>
+		<key>geode.loader/modtober24-banner.png</key>
+		<dict>
+			<key>spriteOffset</key>
+			<string>{0,0}</string>
+			<key>spriteSize</key>
+			<string>{1576,134}</string>
+			<key>spriteSourceSize</key>
+			<string>{1576,134}</string>
+			<key>textureRect</key>
+			<string>{{0,150},{1576,134}}</string>
+			<key>textureRotated</key>
+			<false/>
+		</dict>
+		<key>geode.loader/modtober24-popup.png</key>
+		<dict>
+			<key>spriteOffset</key>
+			<string>{0,0}</string>
+			<key>spriteSize</key>
+			<string>{1726,1140}</string>
+			<key>spriteSourceSize</key>
+			<string>{1726,1140}</string>
+			<key>textureRect</key>
+			<string>{{0,286},{1726,1140}}</string>
+			<key>textureRotated</key>
+			<false/>
+		</dict>
+	</dict>
+	<key>metadata</key>
+	<dict>
+		<key>format</key>
+		<integer>3</integer>
+		<key>realTextureFileName</key>
+		<string>geode.loader/EventSheet-uhd.png</string>
+		<key>size</key>
+		<string>{1726,1426}</string>
+		<key>textureFileName</key>
+		<string>geode.loader/EventSheet-uhd.png</string>
+	</dict>
+</dict>
+</plist>
