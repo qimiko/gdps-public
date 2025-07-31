@@ -68,9 +68,33 @@ void CreditsNode::FLAlert_Clicked(FLAlertLayer*, bool clicked) {
 	}
 };
 
+void CreditsNode::onUpdateLayout() {
+	// we want to center based on the first column only 
+	// i couldn't think of a better way to do this
+
+	if (!m_noTitle) {
+		auto menuWidth = m_names->getScaledContentWidth();
+		if (menuWidth < 115.0f) {
+			m_names->setPositionX(-menuWidth / 2);
+		}
+
+		if (menuWidth > 225.0f) {
+			auto scaleFactor = 0.7f;
+			for (auto child : geode::cocos::CCArrayExt<CCMenuItemSpriteExtra>(m_names->getChildren())) {
+				child->getNormalImage()->setScale(scaleFactor);
+				child->updateSprite();
+			}
+
+			m_menuScale = scaleFactor;
+
+			m_names->updateLayout();
+		}
+	}
+}
+
 void CreditsNode::addUser(const char* name, int userId, int accountId) {
 	auto label = cocos2d::CCLabelBMFont::create(name, "goldFont.fnt");
-	label->setScale(0.75f);
+	label->setScale(m_menuScale);
 
 	if (userId == -1) {
 		m_names->addChild(label);
@@ -78,12 +102,7 @@ void CreditsNode::addUser(const char* name, int userId, int accountId) {
 
 		m_names->updateLayout();
 
-		if (!m_noTitle) {
-			auto menuWidth = m_names->getScaledContentWidth();
-			if (menuWidth < 110.0f) {
-				m_names->setPositionX(-menuWidth / 2);
-			}
-		}
+		onUpdateLayout();
 
 		return;
 	}
@@ -105,14 +124,7 @@ void CreditsNode::addUser(const char* name, int userId, int accountId) {
 
 	m_names->updateLayout();
 
-	// we want to center based on the first column only 
-	// i couldn't think of a better way to do this
-	if (!m_noTitle) {
-		auto menuWidth = m_names->getScaledContentWidth();
-		if (menuWidth < 110.0f) {
-			m_names->setPositionX(-menuWidth / 2);
-		}
-	}
+	onUpdateLayout();
 }
 
 void CreditsNode::onCreator(cocos2d::CCObject* target) {

@@ -2,6 +2,7 @@
 
 #include "base/game_variables.hpp"
 #include "classes/speedhack/speedhackmanagercard.hpp"
+#include "classes/extensions/playlayerext.hpp"
 
 void GameplaySettingsPopup::keyBackClicked() {
 	this->onClose(nullptr);
@@ -222,4 +223,20 @@ bool GameplaySettingsPopup::init() {
 	this->updateCheatIndicator();
 
 	return true;
+}
+
+void GameplaySettingsPopup::show() {
+	auto targetScene = static_cast<cocos2d::CCScene*>(m_scene);
+	if (!targetScene) {
+		targetScene = cocos2d::CCDirector::sharedDirector()->getRunningScene();
+		m_ZOrder = std::max(targetScene->getHighestChildZ() + 1, 105);
+	}
+
+	if (m_ZOrder == 0) {
+		m_ZOrder = 105;
+	}
+
+	targetScene->addChild(this, m_ZOrder);
+	this->setOpacity(150);
+	this->setVisible(true);
 }

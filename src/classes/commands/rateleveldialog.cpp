@@ -207,7 +207,7 @@ bool RateLevelDialog::init(GJGameLevel* level, bool isSend) {
 	reasonInput->m_filterSwearWords = true;
 	reasonInput->m_delegate = this;
 	reasonInput->m_maxLabelLength = 256;
-	reasonInput->setAllowedChars(" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,-!?:)(/~'*@\"");
+	reasonInput->setAllowedChars(" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,-!?)(/*@\"");
 
 	m_mainLayer->addChild(reasonInput);
 	reasonInput->m_textField->setVisible(false);

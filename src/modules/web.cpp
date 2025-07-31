@@ -8,21 +8,23 @@
 #include "base/config.hpp"
 #include "base/game_variables.hpp"
 
-std::string encodeUrlParam(std::string_view str) {
-	std::ostringstream oss;
-	oss.fill('0');
-	oss << std::hex;
+namespace {
+	std::string encodeUrlParam(std::string_view str) {
+		std::ostringstream oss;
+		oss.fill('0');
+		oss << std::hex;
 
-	for (auto c : str) {
-		if (std::isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
-			oss << c;
-			continue;
+		for (auto c : str) {
+			if (std::isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
+				oss << c;
+				continue;
+			}
+
+			oss << std::uppercase << '%' << std::setw(2) << static_cast<int>(static_cast<std::uint8_t>(c)) << std::nouppercase;
 		}
 
-		oss << std::uppercase << '%' << std::setw(2) << static_cast<int>(static_cast<std::uint8_t>(c)) << std::nouppercase;
+		return oss.str();
 	}
-
-	return oss.str();
 }
 
 // i couldn't figure out how to correctly call removeDelimiterChars so we can pretend this is a very smart optimization

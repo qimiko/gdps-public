@@ -43,6 +43,10 @@ void EditorHitboxLayer::drawPlayer(PlayerObject* player) {
 		{ 1.0f, 1.0f, 1.0f, 1.0f }
 	);
 
+	if (_skipHitboxUpdates && !player->m_objectOBB2D) {
+		return;
+	}
+
 	auto box = player->getOrientedBox();
 
 	if (!_skipHitboxUpdates) {
@@ -208,7 +212,12 @@ void EditorHitboxLayer::drawObject(GameObject* obj, int groupFilter) {
 		return;
 	}
 
-	if (auto box = obj->getOrientedBox(); box != nullptr) {
+	if (obj->m_oriented) {
+		if (_skipHitboxUpdates && !obj->m_objectOBB2D) {
+			return;
+		}
+
+		auto box = obj->getOrientedBox();
 		// this should only be run when the object is actually modified. make that the case
 		if (!_skipHitboxUpdates) {
 			obj->updateOrientedBox();

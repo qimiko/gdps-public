@@ -81,7 +81,7 @@ void AboutSettingsPage::createPage() {
 	label->setAlignment(cocos2d::CCTextAlignment::kCCTextAlignmentLeft);
 	label->setAnchorPoint(cocos2d::CCPoint(0.0f, 0.0f));
 	label->setScale(0.5f);
-	label->setPosition(cocos2d::CCPoint(0.0f, 10.0f));
+	label->setPosition(cocos2d::CCPoint(0.0f, 20.0f));
 
 	auto penguin = cocos2d::CCSprite::create("splash.png"_spr);
 
@@ -123,7 +123,7 @@ void AboutSettingsPage::createPage() {
 	c_right->setScaleY(4.4f);
 
 	auto mods_sprite = ButtonSprite::create(
-		"Mods", 220, 0, 0.4f, false, "bigFont.fnt", "GJ_button_04.png", 25.0f);
+		"Mods", 220, 0, 0.7f, false, "bigFont.fnt", "GJ_button_05.png", 30.0f);
 
 	auto mods_button = CCMenuItemSpriteExtra::create(
 		mods_sprite, nullptr, this,
@@ -132,10 +132,10 @@ void AboutSettingsPage::createPage() {
 	this->_internal_menu->addChild(mods_button);
 	this->_menu_objects.push_back(mods_button);
 
-	mods_button->setPosition((-_window_dimensions.width / 2) + width - 20.0f, -(_window_dimensions.height / 2) + 30.0f);
+	mods_button->setPosition((-_window_dimensions.width / 2) + width - 30.0f, -(_window_dimensions.height / 2) + 40.0f);
 
 	auto source_sprite = ButtonSprite::create(
-		"Source", 220, 0, 0.4f, false, "bigFont.fnt", "GJ_button_04.png", 25.0f);
+		"Source", 220, 0, 0.5f, false, "bigFont.fnt", "GJ_button_04.png", 25.0f);
 
 	auto source_button = CCMenuItemSpriteExtra::create(
 		source_sprite, nullptr, this,
@@ -144,7 +144,7 @@ void AboutSettingsPage::createPage() {
 	this->_internal_menu->addChild(source_button);
 	this->_menu_objects.push_back(source_button);
 
-	source_button->setPosition((-_window_dimensions.width / 2) + width - 90.0f, -(_window_dimensions.height / 2) + 30.0f);
+	source_button->setPosition((-_window_dimensions.width / 2) + width - 120.0f, -(_window_dimensions.height / 2) + 40.0f);
 }
 
 void AboutSettingsPage::onMods(cocos2d::CCObject*) {

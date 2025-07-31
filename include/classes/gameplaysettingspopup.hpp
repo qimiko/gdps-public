@@ -36,6 +36,8 @@ protected:
 	void onPracticeHitboxes(cocos2d::CCObject*);
 
 public:
+	virtual void show() override;
+
 	static GameplaySettingsPopup* create() {
 		auto pRet = new GameplaySettingsPopup();
 		if (pRet && pRet->init()) {

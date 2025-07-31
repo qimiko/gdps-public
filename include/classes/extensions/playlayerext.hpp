@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "classes/editorhitboxlayer.hpp"
+#include "classes/speedhack/speedhacklifecyclewatcher.hpp"
 
 class PlayLayerExt : public cocos2d::CCObject {
     bool isIllegitimate_{false};
@@ -17,6 +18,8 @@ class PlayLayerExt : public cocos2d::CCObject {
     cocos2d::CCLabelBMFont* cheatIndicator_{nullptr};
     std::vector<StartPosObject*> startPositions_{};
     std::uint32_t startPositionIdx_{0u};
+    geode::Ref<SpeedhackLifecycleWatcher> speedhackWatcher_{};
+    bool pausingSafe_{false};
 
     void updateIndicators();
 
@@ -69,6 +72,22 @@ public:
 
     void setStartPositionIdx(std::uint32_t value) {
         this->startPositionIdx_ = value;
+    }
+
+    void setSpeedhackWatcher(SpeedhackLifecycleWatcher* watcher) {
+        this->speedhackWatcher_ = watcher;
+    }
+
+    SpeedhackLifecycleWatcher* getSpeedhackWatcher() const {
+        return *this->speedhackWatcher_;
+    }
+
+    void setPausingSafe(bool v) {
+        this->pausingSafe_ = v;
+    }
+
+    bool getPausingSafe() const {
+        return this->pausingSafe_;
     }
 
     // determines if any modifications that are cheats are enabled, but does not set status

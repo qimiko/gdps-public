@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "1.9 GDPS"
-#define MyAppVersion "9.0.1.0"
+#define MyAppVersion "9.0.2.0"
 #define MyAppPublisher "1.9 GDPS"
 #define MyAppURL "https://absolllute.com/gdps"
 #define MyAppExeName "DontRenameMeThxDash.exe"
@@ -56,6 +56,7 @@ Source: ".\game\sqlite3.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\game\steam_api.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\game\websockets.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\game\zlib1.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\game\steam_appid.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\game\Resources\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: ".\logo.ico"; DestDir: "{app}"
 

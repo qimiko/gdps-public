@@ -1,5 +1,17 @@
 # 1.9 GDPS Changelog
 
+## u9.0.2
+
+- Fixed bug where "Show Hitboxes on Death" may unintentionally activate certain hitboxes 
+- Fixed bug where trail icons would not correctly show in achievements
+- Fixed bug where pausing while loading a level may freeze
+- Fixed crash when performing some account actions on mobile
+- Additional minor stability improvements
+
+## u9.0.1
+
+- Update logo
+
 ## u9.0.0
 
 - Added workaround for importing some bugged gmd files

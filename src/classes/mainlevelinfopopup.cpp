@@ -194,14 +194,14 @@ bool MainLevelInfoPopup::init(GJGameLevel* level) {
 		window_size.height / 2
 	});
 
-	auto copySprite = ButtonSprite::create("Copy Level", 60, 0, 0.6f, true, "goldFont.fnt", "GJ_button_04.png", 20.0f);
+	auto copySprite = ButtonSprite::create("Copy Level", 80, 0, 0.6f, true, "goldFont.fnt", "GJ_button_04.png", 25.0f);
 	auto copyBtn = CCMenuItemSpriteExtra::create(
 		copySprite, nullptr, this, static_cast<cocos2d::SEL_MenuHandler>(&MainLevelInfoPopup::onCopy)
 	);
 
 	this->m_buttonMenu->addChild(copyBtn);
 	copyBtn->setPosition(
-		(window_size.width - width) / 2 + 60.0f,
+		(window_size.width - width) / 2 + 65.0f,
 		(window_size.height - height) / 2 + 30.0f
 	);
 

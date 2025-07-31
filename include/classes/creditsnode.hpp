@@ -15,9 +15,13 @@ private:
     int m_willOpenUser{-1};
     bool m_noTitle{false};
 
+    float m_menuScale{0.75f};
+
 protected:
     bool init(const char*);
     void onCreator(cocos2d::CCObject*);
+
+    void onUpdateLayout();
 
 public:
     void addUser(const char* name, int userId, int accountId);

@@ -102,7 +102,6 @@ object GeodeUtils {
             context.startActivity(intent)
             true
         } catch (_: ActivityNotFoundException) {
-            println("anef")
             false
         }
     }

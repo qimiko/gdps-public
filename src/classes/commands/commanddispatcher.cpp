@@ -2,6 +2,25 @@
 
 #include "base/config.hpp"
 
+namespace {
+	std::string encodeUrlParam(std::string_view str) {
+		std::ostringstream oss;
+		oss.fill('0');
+		oss << std::hex;
+
+		for (auto c : str) {
+			if (std::isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
+				oss << c;
+				continue;
+			}
+
+			oss << std::uppercase << '%' << std::setw(2) << static_cast<int>(static_cast<std::uint8_t>(c)) << std::nouppercase;
+		}
+
+		return oss.str();
+	}
+}
+
 void CommandDispatcher::queueCommand(const std::string& command) {
 	this->m_queuedComments.push(command);
 }
@@ -44,7 +63,7 @@ void CommandDispatcher::nextCommand() {
 
 	auto req = web::WebRequest();
 	auto bodyStr = fmt::format("udid={}&accountID={}&userName={}&levelID={}&comment={}&secret=Wmfd2893gb7",
-		gm->m_playerUDID, am->m_accountID, gm->m_playerName, this->m_levelId, nextCommand);
+		gm->m_playerUDID, am->m_accountID, gm->m_playerName, this->m_levelId, encodeUrlParam(nextCommand));
 
 	req.bodyString(bodyStr);
 	req.userAgent(Config::USER_AGENT);

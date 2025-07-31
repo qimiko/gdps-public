@@ -5,7 +5,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 project(aurav2)
-set(aurav2_VERSION 9.0.1)
+set(aurav2_VERSION 9.0.2)
 set(GEODE_MOD_ID zmx.aura)
 
 option(GDMOD_ENABLE_DEV_OVERLAY "Enable ImGui and logging constants" OFF)
@@ -61,6 +61,9 @@ set(GDMOD_SOURCES
   src/modules/overlay.cpp
   src/modules/physics.cpp
   src/modules/web.cpp
+  src/hooks/EditorPauseLayer.cpp
+  src/hooks/EditorUI.cpp
+  src/hooks/ColorSelectPopup.cpp
   src/overlay/code.cpp
   src/overlay/items.cpp
   src/overlay/menu.cpp

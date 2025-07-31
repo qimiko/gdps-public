@@ -4,6 +4,8 @@ param([switch] $includeDebug = $false)
 $gameFolder = "$PSScriptRoot\game\"
 $baseDir = "$PSScriptRoot\..\"
 
+Copy-Item "$PSScriptRoot\steam_appid.txt" "$gameFolder"
+
 # setup geode path
 Copy-Item "$env:GEODE_SDK\bin\nightly\Geode.dll" "$gameFolder"
 Copy-Item "$env:GEODE_SDK\bin\nightly\GeodeUpdater.exe" "$gameFolder"

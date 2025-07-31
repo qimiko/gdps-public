@@ -10,6 +10,8 @@
 #include <Geode/modify/PlayLayer.hpp>
 #include <Geode/modify/AchievementManager.hpp>
 #include <Geode/modify/MenuGameLayer.hpp>
+#include <Geode/modify/AchievementBar.hpp>
+#include <Geode/modify/AchievementCell.hpp>
 
 #include "base/game_variables.hpp"
 
@@ -240,11 +242,11 @@ struct ExtendedAchievementManager : geode::Modify<ExtendedAchievementManager, Ac
 
 		this->addCustomAchievement({
 			.identifier = "geometry.ach.clevel02",
-			.achievedDescription = "Completed \"Lunar Intoxication\" in Normal mode",
+			.achievedDescription = "Completed \"Lunar Intoxication\" (30449) in Normal mode",
 			.order = 27.2f,
 			.title = "GG Cyclic!",
 			.icon = "icon_49",
-			.unachievedDescription = "Complete \"Lunar Intoxication\" in Normal mode"
+			.unachievedDescription = "Complete \"Lunar Intoxication\" (30449) in Normal mode"
 		});
 
 		// replacing some original achievements
@@ -1372,6 +1374,72 @@ struct IconsMenuGameLayer : geode::Modify<IconsMenuGameLayer, MenuGameLayer> {
 
 	static void onModify(auto& self) {
 		(void)self.setHookPriority("MenuGameLayer::resetPlayer", geode::Priority::Replace);
+	}
+};
+
+struct IconsAchievementBar : geode::Modify<IconsAchievementBar, AchievementBar> {
+	bool init(char const* name, char const* desc, char const* icon) {
+		auto iconSv = std::string_view(icon);
+		auto useCustomIcon = iconSv.starts_with("special_");
+
+		if (!AchievementBar::init(name, desc, useCustomIcon ? nullptr : icon)) {
+			return false;
+		}
+
+		if (useCustomIcon) {
+			iconSv.remove_prefix(8);
+			auto id = geode::utils::numFromString<int>(iconSv)
+				.unwrapOr(1);
+
+			auto frameName = OutfitManager::get_manager().is_custom(IconType::Special, id)
+				? fmt::format("player_special_{:02d}_001.png"_spr, id)
+				: fmt::format("player_special_{:02d}_001.png", id);
+
+			auto iconLayer = m_layerColor->getChildByType<cocos2d::CCSprite>(0);
+			auto iconSprite = cocos2d::CCSprite::createWithSpriteFrameName(frameName.c_str());
+
+			if (iconLayer && iconSprite) {
+				iconSprite->setPosition(iconLayer->getPosition());
+				m_layerColor->addChild(iconSprite, 4);
+
+				iconLayer->setVisible(false);
+			}
+		}
+
+		return true;
+	}
+};
+
+struct IconsAchievementCell : geode::Modify<IconsAchievementCell, AchievementCell> {
+	void loadFromDict(cocos2d::CCDictionary* dict) {
+		AchievementCell::loadFromDict(dict);
+
+		if (auto playerSprite = m_mainLayer->getChildByType<SimplePlayer>(0)) {
+			auto icon = static_cast<cocos2d::CCString*>(dict->objectForKey("icon"));
+			if (!icon) {
+				return;
+			}
+
+			auto iconSv = std::string_view(icon->getCString());
+			if (!iconSv.starts_with("special_")) {
+				return;
+			}
+
+			iconSv.remove_prefix(8);
+			auto id = geode::utils::numFromString<int>(iconSv)
+				.unwrapOr(1);
+
+			auto frameName = OutfitManager::get_manager().is_custom(IconType::Special, id)
+				? fmt::format("player_special_{:02d}_001.png"_spr, id)
+				: fmt::format("player_special_{:02d}_001.png", id);
+
+			auto iconSprite = cocos2d::CCSprite::createWithSpriteFrameName(frameName.c_str());
+
+			iconSprite->setPosition(playerSprite->getPosition());
+			m_mainLayer->addChild(iconSprite, 4);
+
+			playerSprite->setVisible(false);
+		}
 	}
 };
 

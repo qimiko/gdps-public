@@ -8,7 +8,6 @@
 
 #include "base/game_variables.hpp"
 
-#include "classes/extensions/playlayerext.hpp"
 #include "speedhackcarddelegate.hpp"
 
 class SpeedhackManagerCard : public cocos2d::CCNode {

@@ -11,13 +11,25 @@
 
 // hacky but allows me to avoid writing custom destructor code
 class SpeedhackLifecycleWatcher : public cocos2d::CCNode {
+    bool m_hasIncremented{false};
+
 public:
+    void endSpeedhack() {
+        if (m_hasIncremented) {
+            SpeedhackManagerCard::decrementLifetime();
+            m_hasIncremented = false;
+        }
+    }
+
     ~SpeedhackLifecycleWatcher() override {
-        SpeedhackManagerCard::decrementLifetime();
+        this->endSpeedhack();
     }
 
     void beginSpeedhack() {
-        SpeedhackManagerCard::incrementLifetime();
+        if (!m_hasIncremented) {
+            SpeedhackManagerCard::incrementLifetime();
+            m_hasIncremented = true;
+        }
     }
 
     CREATE_FUNC(SpeedhackLifecycleWatcher);

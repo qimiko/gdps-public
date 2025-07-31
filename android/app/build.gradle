@@ -49,8 +49,8 @@ android {
         applicationId "com.kyurime.geometryjump"
         minSdk 23
         targetSdk 35
-        versionCode 40
-        versionName "u9.0.1"
+        versionCode 41
+        versionName "u9.0.2"
 
         vectorDrawables {
             useSupportLibrary true

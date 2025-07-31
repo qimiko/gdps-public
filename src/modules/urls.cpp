@@ -229,10 +229,12 @@ std::string ZipUtils_decompressString2Wrap(unsigned char* data, bool use_decrypt
 
 struct SaveFixDSDictionary : geode::Modify<SaveFixDSDictionary, DS_Dictionary> {
 	bool loadRootSubDictFromCompressedFile(const char* filename) {
+/*
 		if (LoadingFailedHijackLayer::hasDestroyedState()) {
 			// ignore load if state already broken
 			return false;
 		}
+*/
 
 #ifdef GEODE_IS_ANDROID
 		// FileOperation isn't a thing on windows
@@ -257,6 +259,7 @@ struct SaveFixDSDictionary : geode::Modify<SaveFixDSDictionary, DS_Dictionary> {
 
 			// detect empty save files and warn about corruption
 			if (data.empty()) {
+				geode::log::warn("safe file empty, code 100");
 				LoadingFailedHijackLayer::setCode(100);
 				LoadingFailedHijackLayer::destroyGameState();
 				return false;
@@ -269,13 +272,15 @@ struct SaveFixDSDictionary : geode::Modify<SaveFixDSDictionary, DS_Dictionary> {
 
 			auto dfile = cocos2d::ZipUtils::decompressString(data, true);
 
-
 			if (this->loadRootSubDictFromString(dfile)) {
 				return true;
 			}
 
+			geode::log::warn("save file decode failed, code 50; got: {}...;{}...", std::string_view(data).substr(0, 50), std::string_view(dfile).substr(0, 50));
+
 			// this means our save data is not functional in some way
 			// destroy state and show corruption layer
+			LoadingFailedHijackLayer::setCode(50);
 			LoadingFailedHijackLayer::destroyGameState();
 
 			return false;
@@ -410,22 +415,24 @@ struct CustomAccountHelpLayer : geode::Modify<CustomAccountHelpLayer, AccountHel
 };
 
 struct CustomAccountLoginLayer : geode::Modify<CustomAccountLoginLayer, AccountLoginLayer> {
-	struct Fields {
-		bool m_inSuccessPopup{false};
-	};
+#ifdef GEODE_IS_ANDROID
+	// stops a crash where the login layer closes before a popup attached to it, crashing if you press back to close the popup
+	void onClose(cocos2d::CCObject* p) {
+		if (auto popup = cocos2d::CCDirector::sharedDirector()->getRunningScene()->getChildByType<FLAlertLayer>(-1); popup != this) {
+			popup->removeFromParentAndCleanup(true);
+		}
 
-	virtual void keyBackClicked() override {
-		if (m_fields->m_inSuccessPopup) {
-			return;
+		AccountLoginLayer::onClose(p);
+	}
+#else
+	void keyBackClicked() override {
+		if (auto popup = cocos2d::CCDirector::sharedDirector()->getRunningScene()->getChildByType<FLAlertLayer>(-1); popup != this) {
+			popup->removeFromParentAndCleanup(true);
 		}
 
 		AccountLoginLayer::keyBackClicked();
 	}
-
-	virtual void loginAccountFinished(int account, int user) override {
-		m_fields->m_inSuccessPopup = true;
-		AccountLoginLayer::loginAccountFinished(account, user);
-	}
+#endif
 };
 
 // adding this to the bindings creates too many issues. might be the worst looking code in the mod :sob: i'm so sorry

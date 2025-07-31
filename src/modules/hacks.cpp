@@ -740,7 +740,7 @@ struct CustomPlayLayer : geode::Modify<CustomPlayLayer, PlayLayer> {
 		cheat_indicator->setID("cheat-indicator"_spr);
 
 		auto lifecycle = SpeedhackLifecycleWatcher::create();
-		this->addChild(lifecycle);
+		extension_object->setSpeedhackWatcher(lifecycle);
 
 		lifecycle->beginSpeedhack();
 
@@ -883,6 +883,27 @@ struct CustomPlayLayer : geode::Modify<CustomPlayLayer, PlayLayer> {
 			if (fadeMusic) {
 				audioEngine->fadeBackgroundMusic(true, 2.0f);
 			}
+		}
+	}
+
+	void pauseGame(bool p1) {
+		auto extension_object = static_cast<PlayLayerExt*>(this->getUserObject("hacks"_spr));
+		if (extension_object && !extension_object->getPausingSafe()) {
+			return;
+		}
+
+		PlayLayer::pauseGame(p1);
+
+		if (AppDelegate::get()->m_paused || m_endTriggered || m_showingEndLayer) {
+			return;
+		}
+	}
+
+	virtual void onEnterTransitionDidFinish() override {
+		PlayLayer::onEnterTransitionDidFinish();
+
+		if (auto extension_object = static_cast<PlayLayerExt*>(this->getUserObject("hacks"_spr)); extension_object != nullptr) {
+			extension_object->setPausingSafe(true);
 		}
 	}
 };
