@@ -29,6 +29,10 @@ struct CustomLevelEditorLayer : geode::Modify<CustomLevelEditorLayer, LevelEdito
 			return;
 		}
 
+		if (this->m_levelSettings->m_twoPlayerMode) {
+			return;
+		}
+
 		auto player = this->m_player;
 		auto secondPlayer = this->m_player2;
 
@@ -258,4 +262,5 @@ struct CustomLevelEditorLayer : geode::Modify<CustomLevelEditorLayer, LevelEdito
 
 		return false;
 	}
+
 };
